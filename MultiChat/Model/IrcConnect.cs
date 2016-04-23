@@ -18,33 +18,37 @@ namespace MultiChat.Model
         private NetworkStream _stream;
         private StreamWriter _writter;
         private StreamReader _reader;
-        public Action<string> GetMessage;
+        public  string Message;
         public IrcConnect(ConnectInfo connectInfo)
         {
             _connectInfo = connectInfo;
             IrcClient = new TcpClient(_connectInfo.Servername, _connectInfo.Port);
         }
-        public  void Connect()
-        {            
+
+        public void Connect()
+        {
             using (_stream = IrcClient.GetStream())
             {
                 Connecting(this, _connectInfo);
                 ListChannel(null, null);
+                JoiningChannel(null, _connectInfo);
                 using (_reader = new StreamReader(_stream))
                 {
-                    while(IrcClient.Connected)
+                    while (IrcClient.Connected)
                     {
-                        GetMessage(_reader.ReadLine());                      
+                        Message = _reader.ReadLine();
+                        if (Message != null)
+                        {
+                            GetMessages(this, _connectInfo);
+                        }                       
                     }
                 }
             }
         }
-        public void Send(string message)
-        {
 
-        }
         public event EventHandler<ConnectInfo> Connecting;
         public event EventHandler<ConnectInfo> JoiningChannel;
-        public event EventHandler<ConnectInfo> ListChannel;           
+        public event EventHandler<ConnectInfo> ListChannel;
+        public event EventHandler<ConnectInfo> GetMessages;
     }
 }

@@ -59,6 +59,7 @@
     <Compile Include="Model\Command.cs" />
     <Compile Include="Model\ConnectInfo.cs" />
     <Compile Include="Model\IrcConnect.cs" />
+    <Compile Include="Model\MessageDecode.cs" />
     <Compile Include="ViewModel\ClientViewModel.cs" />
     <Compile Include="Views\SettingView.xaml.cs">
       <DependentUpon>SettingView.xaml</DependentUpon>

@@ -19,13 +19,12 @@
                 </TabItem.Header>
                 <Grid>
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition></ColumnDefinition>
+                        <ColumnDefinition Width="1.5*"></ColumnDefinition>
                         <ColumnDefinition  Width="5*"></ColumnDefinition>
                         <ColumnDefinition ></ColumnDefinition>
                     </Grid.ColumnDefinitions>
-                    <ListBox x:Name="listview"  ItemsSource="{Binding Messages}" Grid.Column="1">
-                    </ListBox>
-                    <StackPanel Grid.Column="2" x:Name="RegForm">
+                    <ListBox  Grid.Column="1" ItemsSource="{Binding MessagesList}"/>
+                    <StackPanel Grid.Column="2" x:Name="RegForm" HorizontalAlignment="Stretch">
                         <Label Content="Server" HorizontalAlignment="Center"></Label>
                         <TextBox ToolTip="Введите сервер" Text="{Binding Path=ServerName}" x:Name="ServerBox"></TextBox>
                         <Label Content="Port" HorizontalAlignment="Center"></Label>
@@ -38,7 +37,14 @@
                         <TextBox Text="{Binding Path=Channel}"></TextBox>
                         <Button Command="{Binding ConnectCommand}" Content="Connect"></Button>
                     </StackPanel>
-                   
+                    <Grid Grid.Column="0">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="auto"></RowDefinition>
+                            <RowDefinition></RowDefinition>
+                        </Grid.RowDefinitions>
+                        <TextBlock Text="{Binding ChannelsList.Count}" Grid.Row="0" HorizontalAlignment="Center"></TextBlock>
+                        <ListBox x:Name="ChannelListBox" Grid.Row="1" ItemsSource="{Binding ChannelsList}"></ListBox>
+                    </Grid>
                 </Grid>
             </TabItem>
         </TabControl>
@@ -48,7 +54,7 @@
                     <KeyBinding Command="{Binding simpleCommand}" Key="Return"></KeyBinding>
                 </TextBox.InputBindings>
             </TextBox>
-            <Button HorizontalAlignment="Right" x:Name="button1" Content="{Binding Message}" Command="{Binding simpleCommand}"></Button>
+            <Button HorizontalAlignment="Right" x:Name="button1" Content="{Binding ElementName=ChannelListBox,Path=SelectedItem}" ></Button>
         </Grid>
     </Grid>
 </Window>

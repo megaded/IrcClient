@@ -16,28 +16,23 @@ namespace MultiChat.ViewModel
     {
         public ClientViewModel()
         {
-            ServerName = "irc.ircnet.ru";
+            ServerName = "irc.chat.twitch.tv";
             Port = 6667;
-            NickName = "megadedDDD";
-            Password = "11111";
+            NickName = "megaded";
+            Password = "oauth:3yrde2ryioarqzc9w3sweagc2m0hcf";
             Channel = "etozhemad";
             infoConnect = new ConnectInfo(ServerName,Port,NickName,Password,Channel);
             IrcClient = new IrcConnect(infoConnect);
             ConnectCommand = new Command(ConnectToChannel);
-            commands = new ClientCommand(IrcClient.IrcClient);
+            commands = new ClientCommand(IrcClient.IrcClient,MessagesList, ChannelsList);
             IrcClient.Connecting += commands.Connect;
             IrcClient.JoiningChannel += commands.Join;
-            IrcClient.ListChannel += commands.Channels;                
+            IrcClient.ListChannel += commands.ChannelsList;
+            IrcClient.GetMessages += commands.DecodeMessage;            
         }
         public void ConnectToChannel()
         {
-            IrcClient.GetMessage = (mess) => Application.Current.Dispatcher.Invoke(() => Messages.Add(mess));
             IrcClient.Connect();
-        }
-
-        private void IrcClient_Join(object sender, EventArgs e)
-        {
-            throw new NotImplementedException();
         }
         private ConnectInfo infoConnect;
         private ClientCommand commands;
@@ -48,7 +43,8 @@ namespace MultiChat.ViewModel
         private string nickname;
         private string password;
         private string channel;
-        public ObservableCollection<string> Messages { get; set; } = new ObservableCollection<string>();
+        public ObservableCollection<string> MessagesList { get; set; } = new ObservableCollection<string>();
+        public ObservableCollection<string> ChannelsList { get; set; } = new ObservableCollection<string>();
         public string ServerName
         {
             get { return serverName; }
