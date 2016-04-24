@@ -7,6 +7,15 @@
         xmlns:views="clr-namespace:MultiChat.Views"
         mc:Ignorable="d"
         Title="MainWindow" Height="350" Width="525">
+    <Window.Resources>
+        <DataTemplate x:Key="ChatTemplate">
+            <StackPanel>
+                <Label Content="{Binding Time}" Foreground="#FFEA0A0A" ></Label>
+                <Label Content="{Binding NickName}" Foreground="#FF124AE0" FontSize="15"></Label>
+                <Label Content="{Binding Message}" Foreground="#FF39AA20"></Label>
+            </StackPanel>
+        </DataTemplate>
+    </Window.Resources>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition ></RowDefinition>
@@ -23,19 +32,20 @@
                         <ColumnDefinition  Width="5*"></ColumnDefinition>
                         <ColumnDefinition ></ColumnDefinition>
                     </Grid.ColumnDefinitions>
-                    <ListBox  Grid.Column="1" ItemsSource="{Binding MessagesList}"/>
+                    <ListBox   Grid.Column="1" ItemsSource="{Binding MessagesList}" FontSize="12" ItemTemplate="{StaticResource ChatTemplate}"/>
                     <StackPanel Grid.Column="2" x:Name="RegForm" HorizontalAlignment="Stretch">
                         <Label Content="Server" HorizontalAlignment="Center"></Label>
-                        <TextBox ToolTip="Введите сервер" Text="{Binding Path=ServerName}" x:Name="ServerBox"></TextBox>
+                        <TextBox ToolTip="Введите сервер" Text="{Binding Path=ServerName}"  x:Name="ServerBox"></TextBox>
                         <Label Content="Port" HorizontalAlignment="Center"></Label>
                         <TextBox Text="{Binding Path=Port}"></TextBox>
                         <Label Content="NickName" HorizontalAlignment="Center"></Label>
                         <TextBox Text="{Binding Path=NickName}"></TextBox>
                         <Label Content="Password" HorizontalAlignment="Center"></Label>
                         <TextBox Text="{Binding Path=Password}"></TextBox>
+                        <Button Command="{Binding ConnectCommand}" Content="Connect"></Button>
                         <Label Content="Channel" HorizontalAlignment="Center"></Label>
                         <TextBox Text="{Binding Path=Channel}"></TextBox>
-                        <Button Command="{Binding ConnectCommand}" Content="Connect"></Button>
+                        <Button Content="Join Channel" FontSize="10" Command="{Binding JoinChannel}"></Button>
                     </StackPanel>
                     <Grid Grid.Column="0">
                         <Grid.RowDefinitions>
@@ -43,18 +53,19 @@
                             <RowDefinition></RowDefinition>
                         </Grid.RowDefinitions>
                         <TextBlock Text="{Binding ChannelsList.Count}" Grid.Row="0" HorizontalAlignment="Center"></TextBlock>
-                        <ListBox x:Name="ChannelListBox" Grid.Row="1" ItemsSource="{Binding ChannelsList}"></ListBox>
+                        <ListBox x:Name="ChannelListBox" Grid.Row="1" ItemsSource="{Binding ChannelsList}" SelectedItem="{Binding Channel}">
+                        </ListBox>
                     </Grid>
                 </Grid>
             </TabItem>
         </TabControl>
         <Grid Grid.Row="1">
-            <TextBox HorizontalAlignment="Stretch" x:Name="sendTextBox" Text="{Binding ElementName=ServerBox, Path=Text}" >
+            <TextBox HorizontalAlignment="Stretch"  Text="{Binding MessageInput}" >
                 <TextBox.InputBindings>
-                    <KeyBinding Command="{Binding simpleCommand}" Key="Return"></KeyBinding>
+                    <KeyBinding Command="{Binding SendMessage}" Key="Return"></KeyBinding>
                 </TextBox.InputBindings>
             </TextBox>
-            <Button HorizontalAlignment="Right" x:Name="button1" Content="{Binding ElementName=ChannelListBox,Path=SelectedItem}" ></Button>
+            <Button HorizontalAlignment="Right" Content="Отправить" Command="{Binding SendMessage}"></Button>
         </Grid>
     </Grid>
 </Window>

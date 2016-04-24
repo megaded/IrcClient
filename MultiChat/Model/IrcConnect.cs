@@ -16,7 +16,6 @@ namespace MultiChat.Model
         public TcpClient IrcClient;
         private ConnectInfo _connectInfo;
         private NetworkStream _stream;
-        private StreamWriter _writter;
         private StreamReader _reader;
         public  string Message;
         public IrcConnect(ConnectInfo connectInfo)
@@ -31,7 +30,6 @@ namespace MultiChat.Model
             {
                 Connecting(this, _connectInfo);
                 ListChannel(null, null);
-                JoiningChannel(null, _connectInfo);
                 using (_reader = new StreamReader(_stream))
                 {
                     while (IrcClient.Connected)
@@ -45,9 +43,7 @@ namespace MultiChat.Model
                 }
             }
         }
-
         public event EventHandler<ConnectInfo> Connecting;
-        public event EventHandler<ConnectInfo> JoiningChannel;
         public event EventHandler<ConnectInfo> ListChannel;
         public event EventHandler<ConnectInfo> GetMessages;
     }

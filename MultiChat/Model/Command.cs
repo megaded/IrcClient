@@ -11,8 +11,6 @@ namespace MultiChat.Model
 {
     public class Command : ICommand 
     {
-        private bool _chatLaunched = false;
-
         public Command(Action action)
         {
             ExecuteDelegate = action;
@@ -22,13 +20,11 @@ namespace MultiChat.Model
         public void Execute(object parameter)
         {
             Task.Run(()=>  ExecuteDelegate());
-            _chatLaunched = true;
         }
         public bool CanExecute(object parameter)
         {
-            if (_chatLaunched)
-                return false; 
-            else return true;
+            
+             return true;
         }      
     }
 }

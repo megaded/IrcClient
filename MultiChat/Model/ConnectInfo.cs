@@ -12,15 +12,13 @@ namespace MultiChat.Model
         public int Port;
         public string NickName;
         public string Password;
-        public string Channel;
-
-        public ConnectInfo(string server,int port,string nickname,string password,string channel)
+        public ConnectInfo(string server,int port,string nickname,string password)
         {
             Servername = server;
             Port = port;
             NickName = nickname;
             Password = password;
-            Channel = channel;
+
         }
     }
 }

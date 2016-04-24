@@ -13,9 +13,9 @@ namespace MultiChat.Model
     class ClientCommand
     {
         private TcpClient Client;
-        private ObservableCollection<string> _messages;
+        private ObservableCollection<ChatMessage> _messages;
         private ObservableCollection<string> _channels;
-        public ClientCommand(TcpClient client, ObservableCollection<string> messages, ObservableCollection<string> channels)
+        public ClientCommand(TcpClient client, ObservableCollection<ChatMessage> messages, ObservableCollection<string> channels)
         {
             Client = client;
             _messages = messages;
@@ -29,17 +29,23 @@ namespace MultiChat.Model
                 writterStream.WriteLine($"PASS {e.Password}");
                 writterStream.Flush();
             }
-            writterStream.WriteLine("USER guest 0 * :Ronnie Reagan");
+            writterStream.WriteLine($"USER {e.NickName} 0 * :{e.NickName}");
             writterStream.Flush();
             writterStream.WriteLine($"NICK {e.NickName}");
             writterStream.Flush();
             writterStream.WriteLine($"MOTD");
             writterStream.Flush();
         }
-        public void Join(object sender, ConnectInfo e)
+        public void JoinChannel(string channel)
         {
             StreamWriter writterStream = new StreamWriter(Client.GetStream());
-            writterStream.WriteLine($"JOIN #{e.Channel}");
+            writterStream.WriteLine($"JOIN {channel}");
+            writterStream.Flush();
+        }
+        public void SendMessage (string message,string channel)
+        {
+            StreamWriter writterStream = new StreamWriter(Client.GetStream());
+            writterStream.WriteLine($"PRIVMSG {channel} :{message}");
             writterStream.Flush();
         }
         public void ChannelsList(object sender, ConnectInfo e)
@@ -48,6 +54,7 @@ namespace MultiChat.Model
             writterStream.WriteLine($"LIST");
             writterStream.Flush();
         }
+        // Продумать способ получше.
         public void DecodeMessage(object sender, ConnectInfo e)
         {
             var IrcClient = (IrcConnect)sender;
@@ -57,30 +64,38 @@ namespace MultiChat.Model
                 if (message.Contains("PRIVMSG"))
                 {
                     var indexx = message.IndexOf("!");
-                    var nick = message.Substring(1, indexx - 1);
-                    var channel = e.Channel;
-                    indexx = message.IndexOf(channel);
-                    message = message.Remove(0, indexx + channel.Length + 2);
-                    Application.Current.Dispatcher.Invoke(() => _messages.Add(nick+":"+message));
-                }
-                var index = message.IndexOf(" ");
-                var code = message.Substring(index + 1, 3);
-                if (code == "322")
-                {
-                    var channel = message;
-                    index = channel.IndexOf("#");
-                    channel = channel.Remove(0, index);
-                    index = channel.IndexOf(" ");
-                    channel = channel.Substring(0, index);
-                    Application.Current.Dispatcher.Invoke(() => _channels.Add(channel));
+                    if (indexx > 0)
+                    {
+                        var nick = message.Substring(1, indexx - 1);
+                        indexx = message.IndexOf("#");
+                        message = message.Remove(0, indexx);
+                        indexx = message.IndexOf(":");
+                        message = message.Substring(indexx + 1, (message.Length - indexx) - 1);
+                        Application.Current.Dispatcher.Invoke(() => _messages.Add(new ChatMessage(nick, message)));
+                    }
                 }
                 else
                 {
-                    index = message.IndexOf(e.NickName);
-                    if (index > 0)
+                    var index = message.IndexOf(" ");
+                    var code = message.Substring(index + 1, 3);
+                    // 322 код вывода каналов LIST
+                    if (code == "322")
                     {
-                        var mes = message.Remove(0, index + e.NickName.Length);
-                        Application.Current.Dispatcher.Invoke(() => _messages.Add(message));
+                        var channel = message;
+                        index = channel.IndexOf("#");
+                        channel = channel.Remove(0, index);
+                        index = channel.IndexOf(" ");
+                        channel = channel.Substring(0, index);
+                        Application.Current.Dispatcher.Invoke(() => _channels.Add(channel));
+                    }
+                    else
+                    {
+                        index = message.IndexOf(e.NickName);
+                        if (index > 0)
+                        {
+                            var mes = message.Remove(0, index + e.NickName.Length);
+                            Application.Current.Dispatcher.Invoke(() => _messages.Add(new ChatMessage(string.Empty, message)));
+                        }
                     }
                 }
             }
