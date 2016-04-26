@@ -10,17 +10,16 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace MultiChat.Views
+namespace IrcClient.Views
 {
     /// <summary>
-    /// Логика взаимодействия для SettingView.xaml
+    /// Логика взаимодействия для SettingWindow.xaml
     /// </summary>
-    public partial class SettingView : Page
+    public partial class SettingWindow : Window
     {
-        public SettingView()
+        public SettingWindow()
         {
             InitializeComponent();
         }

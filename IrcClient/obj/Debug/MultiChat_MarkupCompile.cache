@@ -4,17 +4,17 @@
 winexe
 C#
 .cs
-C:\Users\Евгений\Documents\Visual Studio 2015\Projects\MultiChat\MultiChat\obj\Debug\
+C:\Users\Евгений\Documents\Visual Studio 2015\Projects\IrcClient\IrcClient\obj\Debug\
 MultiChat
 none
 false
 DEBUG;TRACE
-C:\Users\Евгений\Documents\Visual Studio 2015\Projects\MultiChat\MultiChat\App.xaml
-2-268100047
+C:\Users\Евгений\Documents\Visual Studio 2015\Projects\IrcClient\IrcClient\App.xaml
+2890985737
 
-131298837363
+141350480224
 131569487696
-MainWindow.xaml;Views\SettingView.xaml;
+MainWindow.xaml;Views\SettingWindow.xaml;
 
 False
 

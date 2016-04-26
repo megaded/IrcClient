@@ -7,7 +7,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
 
-namespace MultiChat.Model
+namespace IrcClient.Model
 {
     public class Command : ICommand 
     {

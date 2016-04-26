@@ -8,17 +8,17 @@ using System.Net.Sockets;
 using System.Collections.ObjectModel;
 using System.Windows;
 
-namespace MultiChat.Model
+namespace IrcClient.Model
 {
     class ClientCommand
     {
         private TcpClient Client;
-        private ObservableCollection<ChatMessage> _messages;
-        private ObservableCollection<string> _channels;
-        public ClientCommand(TcpClient client, ObservableCollection<ChatMessage> messages, ObservableCollection<string> channels)
+        private ObservableCollection<string> _listChannels;
+        private ObservableCollection<Channel> _channels;
+        public ClientCommand(TcpClient client,  ObservableCollection<string> listChannels, ObservableCollection<Channel> channels)
         {
             Client = client;
-            _messages = messages;
+            _listChannels = listChannels;
             _channels = channels;
         }
         public void Connect(object sender, ConnectInfo e)
@@ -36,10 +36,11 @@ namespace MultiChat.Model
             writterStream.WriteLine($"MOTD");
             writterStream.Flush();
         }
-        public void JoinChannel(string channel)
+        public void AddChannel(string channelName) 
         {
+           Application.Current.Dispatcher.Invoke(()=> _channels.Add(new Channel(channelName)));
             StreamWriter writterStream = new StreamWriter(Client.GetStream());
-            writterStream.WriteLine($"JOIN {channel}");
+            writterStream.WriteLine($"JOIN {channelName}");
             writterStream.Flush();
         }
         public void SendMessage (string message,string channel)
@@ -70,8 +71,20 @@ namespace MultiChat.Model
                         indexx = message.IndexOf("#");
                         message = message.Remove(0, indexx);
                         indexx = message.IndexOf(":");
+                        var channelname = "";
+                        foreach (var channel in _channels)
+                        {
+                            if (message.Contains(channel.Name))
+                            {
+                                channelname = channel.Name;
+                                break;
+                            }
+                        }
+                        var targetChannel = _channels.Where(channel => channel.Name == channelname).First();
+                        var indexTargetChannel = _channels.IndexOf(targetChannel);                
                         message = message.Substring(indexx + 1, (message.Length - indexx) - 1);
-                        Application.Current.Dispatcher.Invoke(() => _messages.Add(new ChatMessage(nick, message)));
+                        Application.Current.Dispatcher.Invoke(
+                            () => _channels[indexTargetChannel].Messages.Add(new ChatMessage(nick,message)));
                     }
                 }
                 else
@@ -86,7 +99,7 @@ namespace MultiChat.Model
                         channel = channel.Remove(0, index);
                         index = channel.IndexOf(" ");
                         channel = channel.Substring(0, index);
-                        Application.Current.Dispatcher.Invoke(() => _channels.Add(channel));
+                        Application.Current.Dispatcher.Invoke(() => _listChannels.Add(channel));
                     }
                     else
                     {
@@ -94,7 +107,7 @@ namespace MultiChat.Model
                         if (index > 0)
                         {
                             var mes = message.Remove(0, index + e.NickName.Length);
-                            Application.Current.Dispatcher.Invoke(() => _messages.Add(new ChatMessage(string.Empty, message)));
+                          Application.Current.Dispatcher.Invoke(() => _channels[0].Messages.Add(new ChatMessage(string.Empty, message)));
                         }
                     }
                 }

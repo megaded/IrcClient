@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MultiChat.Model
+namespace IrcClient.Model
 {
   public  class ConnectInfo:EventArgs
     {

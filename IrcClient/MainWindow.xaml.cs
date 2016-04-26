@@ -2,10 +2,10 @@
 using System.Windows;
 using System.Collections.ObjectModel;
 using MultiChat.Model;
-using MultiChat.ViewModel;
+using IrcClient.ViewModel;
 using System.Windows.Controls;
 
-namespace MultiChat
+namespace IrcClient
 {
     public partial class MainWindow : Window
     {

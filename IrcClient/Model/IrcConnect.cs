@@ -9,7 +9,7 @@ using System.Collections.ObjectModel;
 using System.Threading;
 using System.Windows.Threading;
 
-namespace MultiChat.Model
+namespace IrcClient.Model
 {
     public class IrcConnect
     {
@@ -23,7 +23,6 @@ namespace MultiChat.Model
             _connectInfo = connectInfo;
             IrcClient = new TcpClient(_connectInfo.Servername, _connectInfo.Port);
         }
-
         public void Connect()
         {
             using (_stream = IrcClient.GetStream())

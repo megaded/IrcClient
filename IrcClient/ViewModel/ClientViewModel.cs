@@ -1,4 +1,4 @@
-﻿using MultiChat.Model;
+﻿using IrcClient.Model;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -10,43 +10,45 @@ using System.Windows;
 using System.Windows.Input;
 using System.Windows.Threading;
 
-namespace MultiChat.ViewModel
+namespace IrcClient.ViewModel
 {
- public   class ClientViewModel : INotifyPropertyChanged
+    public class ClientViewModel : INotifyPropertyChanged
     {
         public ClientViewModel()
         {
-            ServerName = "irc.chat.twitch.tv";
+            ServerName = "chat.freenode.net";
             Port = 6667;
             NickName = "megaded";
-            Password = "oauth:3yrde2ryioarqzc9w3sweagc2m0hcf";
-            Channel = "#admiralbulldog";
-            ConnectCommand = new Command(()=>
+            Password = "";
+            Channel = "";
+            ConnectCommand = new Command(() =>
             {
                 infoConnect = new ConnectInfo(ServerName, Port, NickName, Password);
                 IrcClient = new IrcConnect(infoConnect);
-                commands = new ClientCommand(IrcClient.IrcClient, MessagesList, ChannelsList);
+                commands = new ClientCommand(IrcClient.IrcClient, ChannelsList, Channels);
+                Application.Current.Dispatcher.Invoke(() => Channels.Add(new Channel("Чат")));
                 IrcClient.Connecting += commands.Connect;
                 IrcClient.ListChannel += commands.ChannelsList;
                 IrcClient.GetMessages += commands.DecodeMessage;
                 IrcClient.Connect();
+               
             });
-            JoinChannel = new Command(()=> commands.JoinChannel(Channel));
             SendMessage = new Command(() => commands.SendMessage(MessageInput, Channel));
+            AddChannel = new Command(() => commands.AddChannel(Channel));
         }
         private ConnectInfo infoConnect;
         private ClientCommand commands;
         IrcConnect IrcClient;
         public ICommand ConnectCommand { get; set; }
-        public ICommand JoinChannel { get; set; }
-        public ICommand SendMessage { get; set; } 
+        public ICommand SendMessage { get; set; }
+        public ICommand AddChannel { get; set; }
         private string serverName;
         private int port;
         private string nickname;
         private string password;
         private string channel;
         private string messageInput;
-        public ObservableCollection<ChatMessage> MessagesList { get; set; } = new ObservableCollection<ChatMessage>();
+        public ObservableCollection<Channel> Channels { get; set; } = new ObservableCollection<Channel>();
         public ObservableCollection<string> ChannelsList { get; set; } = new ObservableCollection<string>();
         public string ServerName
         {
@@ -59,7 +61,7 @@ namespace MultiChat.ViewModel
                     OnPropertyChanged("ServerName");
                 }
             }
-        }        
+        }
         public int Port
         {
             get { return port; }
@@ -71,7 +73,7 @@ namespace MultiChat.ViewModel
                     OnPropertyChanged("Port");
                 }
             }
-        }       
+        }
         public string NickName
         {
             get { return nickname; }
@@ -83,7 +85,7 @@ namespace MultiChat.ViewModel
                     OnPropertyChanged("NickName");
                 }
             }
-        }        
+        }
         public string Password
         {
             get { return password; }
@@ -95,7 +97,7 @@ namespace MultiChat.ViewModel
                     OnPropertyChanged("Password");
                 }
             }
-        }        
+        }
         public string Channel
         {
             get { return channel; }
@@ -104,10 +106,10 @@ namespace MultiChat.ViewModel
                 if (value != channel)
                 {
                     channel = value;
-                    OnPropertyChanged("Channel");                  
+                    OnPropertyChanged("Channel");
                 }
             }
-        }       
+        }
         public string MessageInput
         {
             get { return messageInput; }
@@ -128,6 +130,6 @@ namespace MultiChat.ViewModel
                 handler(this, new PropertyChangedEventArgs(propertyName));
             }
         }
-        public event PropertyChangedEventHandler PropertyChanged;     
+        public event PropertyChangedEventHandler PropertyChanged;
     }
 }
