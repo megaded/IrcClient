@@ -1,8 +1,8 @@
-﻿<Application x:Class="MultiChat.App"
+﻿<Application x:Class="IrcClient.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:local="clr-namespace:MultiChat"
-              xmlns:view="clr-namespace:MultiChat"
+             xmlns:local="clr-namespace:IrcClient"
+              xmlns:view="clr-namespace:IrcClient"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
          

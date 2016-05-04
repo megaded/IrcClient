@@ -9,11 +9,11 @@ namespace IrcClient
 {
     public partial class MainWindow : Window
     {
-        public ClientViewModel ViewModel { get; set; }
+        public MainViewModel ViewModel { get; set; }
         public MainWindow()
         {
             InitializeComponent();
-            ViewModel = new ClientViewModel();
+            ViewModel = new MainViewModel();
             DataContext = ViewModel;                       
         }
     }

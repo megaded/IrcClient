@@ -15,7 +15,7 @@ namespace IrcClient.Model
         private TcpClient Client;
         private ObservableCollection<string> _listChannels;
         private ObservableCollection<Channel> _channels;
-        public ClientCommand(TcpClient client,  ObservableCollection<string> listChannels, ObservableCollection<Channel> channels)
+        public ClientCommand(TcpClient client, ObservableCollection<string> listChannels, ObservableCollection<Channel> channels)
         {
             Client = client;
             _listChannels = listChannels;
@@ -36,17 +36,24 @@ namespace IrcClient.Model
             writterStream.WriteLine($"MOTD");
             writterStream.Flush();
         }
-        public void AddChannel(string channelName) 
+        public void AddChannel(string channelName)
         {
-           Application.Current.Dispatcher.Invoke(()=> _channels.Add(new Channel(channelName)));
+            Application.Current.Dispatcher.Invoke(() => _channels.Add(new Channel(channelName)));
             StreamWriter writterStream = new StreamWriter(Client.GetStream());
-            writterStream.WriteLine($"JOIN {channelName}");
+            writterStream.WriteLine($"JOIN #{channelName}");
             writterStream.Flush();
         }
-        public void SendMessage (string message,string channel)
+        public void CloseChannel(int channelIndex)
         {
             StreamWriter writterStream = new StreamWriter(Client.GetStream());
-            writterStream.WriteLine($"PRIVMSG {channel} :{message}");
+            writterStream.WriteLine($"PART {_channels[channelIndex].Name}");
+            writterStream.Flush();
+            Application.Current.Dispatcher.Invoke(() => _channels.RemoveAt(channelIndex));
+        }
+        public void SendMessage(string message, int indexChannel)
+        {
+            StreamWriter writterStream = new StreamWriter(Client.GetStream());
+            writterStream.WriteLine($"PRIVMSG {_channels[indexChannel].Name} :{message}");
             writterStream.Flush();
         }
         public void ChannelsList(object sender, ConnectInfo e)
@@ -80,11 +87,13 @@ namespace IrcClient.Model
                                 break;
                             }
                         }
-                        var targetChannel = _channels.Where(channel => channel.Name == channelname).First();
-                        var indexTargetChannel = _channels.IndexOf(targetChannel);                
-                        message = message.Substring(indexx + 1, (message.Length - indexx) - 1);
-                        Application.Current.Dispatcher.Invoke(
-                            () => _channels[indexTargetChannel].Messages.Add(new ChatMessage(nick,message)));
+                        var targetChannel = _channels.ToList().Find(x=>x.Name== channelname);
+                        if (targetChannel != null)
+                        {
+                            message = message.Substring(indexx + 1, (message.Length - indexx) - 1);
+                            Application.Current.Dispatcher.Invoke(
+                                () => targetChannel.Messages.Add(new ChatMessage(nick, message)));
+                        }
                     }
                 }
                 else
@@ -107,7 +116,7 @@ namespace IrcClient.Model
                         if (index > 0)
                         {
                             var mes = message.Remove(0, index + e.NickName.Length);
-                          Application.Current.Dispatcher.Invoke(() => _channels[0].Messages.Add(new ChatMessage(string.Empty, message)));
+                            Application.Current.Dispatcher.Invoke(() => _channels[0].Messages.Add(new ChatMessage(string.Empty, message)));
                         }
                     }
                 }

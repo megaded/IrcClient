@@ -7,15 +7,6 @@
         xmlns:views="clr-namespace:IrcClient.Views"
         mc:Ignorable="d"
         Title="Irc Client" Height="420" Width="700">
-    <Window.Resources>
-        <DataTemplate x:Key="ChatTemplate">
-            <StackPanel  Margin="0,5">
-                <TextBlock Text="{Binding Time}" Foreground="#FFEA0A0A" ></TextBlock>
-                <TextBlock Text="{Binding NickName}" Foreground="#FF124AE0" FontSize="15"></TextBlock>
-                <TextBlock Text="{Binding Message}" Foreground="#FF39AA20" TextWrapping="Wrap"></TextBlock>
-            </StackPanel>
-        </DataTemplate>
-    </Window.Resources>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="auto"></RowDefinition>
@@ -27,10 +18,11 @@
             <ColumnDefinition Width="5*"></ColumnDefinition>
         </Grid.ColumnDefinitions>
         <StackPanel Grid.Row="0" Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Top">
-            <Button Content="{Binding Channel}" ></Button>
+            <TextBox Width="100" Text="{Binding ChannelName}"></TextBox>
+            <Button Command="{Binding AddChannel}" Content="Connect Channel" ></Button>
             <Button Content="Connect" Command="{Binding ConnectCommand}"></Button>
         </StackPanel>
-        <ListBox Grid.Row="1" Grid.Column="0" ItemsSource="{Binding ChannelsList}" SelectedItem="{Binding Channel,Mode=OneWayToSource}" >
+        <ListBox Grid.Row="1" Grid.Column="0" ItemsSource="{Binding ChannelsList}" SelectedItem="{Binding ChannelName,Mode=OneWayToSource}" >
             <ListBox.ItemTemplate>
                 <DataTemplate>
                     <TextBlock Text="{Binding}" Foreground="Gray">
@@ -41,25 +33,14 @@
                 </DataTemplate>
             </ListBox.ItemTemplate>
         </ListBox>
-        <TabControl Grid.Row="1" Grid.Column="1" ItemsSource="{Binding Channels}">
-            <TabControl.ItemTemplate>
-                <DataTemplate>
-                    <Label Content="{Binding Name}"></Label>
-                </DataTemplate>
-            </TabControl.ItemTemplate>
-            <TabControl.ContentTemplate>
-                <DataTemplate>
-                    <ListBox ItemTemplate="{StaticResource ChatTemplate}" ItemsSource="{Binding Messages}" Grid.Column="1" FontSize="12"/>
-                </DataTemplate>
-            </TabControl.ContentTemplate>
-        </TabControl>
+        <views:MessageBoxView Grid.Row="1" Grid.Column="1"></views:MessageBoxView>
         <Grid Grid.Row="2" Grid.Column="1">
             <TextBox VerticalAlignment="Stretch"  Text="{Binding MessageInput}" >
                 <TextBox.InputBindings>
                     <KeyBinding Command="{Binding SendMessage}" Key="Return"></KeyBinding>
                 </TextBox.InputBindings>
             </TextBox>
-            <Button  Content="Отправить" Command="{Binding SendMessage}" HorizontalAlignment="Right"/>
+            <Button  Content="Отправить"  Command="{Binding SendMessage}" HorizontalAlignment="Right"/>
         </Grid>
     </Grid>
 </Window>

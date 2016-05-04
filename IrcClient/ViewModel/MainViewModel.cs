@@ -12,15 +12,15 @@ using System.Windows.Threading;
 
 namespace IrcClient.ViewModel
 {
-    public class ClientViewModel : INotifyPropertyChanged
+    public class MainViewModel : INotifyPropertyChanged
     {
-        public ClientViewModel()
+        public MainViewModel()
         {
-            ServerName = "chat.freenode.net";
+            ServerName = "irc.chat.twitch.tv";
             Port = 6667;
             NickName = "megaded";
-            Password = "";
-            Channel = "";
+            Password = "oauth:6huwmg6jwb4po4cuh33hovbb7a14aq";
+            ChannelName = "";
             ConnectCommand = new Command(() =>
             {
                 infoConnect = new ConnectInfo(ServerName, Port, NickName, Password);
@@ -33,8 +33,9 @@ namespace IrcClient.ViewModel
                 IrcClient.Connect();
                
             });
-            SendMessage = new Command(() => commands.SendMessage(MessageInput, Channel));
-            AddChannel = new Command(() => commands.AddChannel(Channel));
+            SendMessage = new Command(() => commands.SendMessage(MessageInput, IndexChannel));
+            AddChannel = new Command(() => commands.AddChannel(ChannelName));
+            CloseChannel = new Command(() => commands.CloseChannel(IndexChannel));
         }
         private ConnectInfo infoConnect;
         private ClientCommand commands;
@@ -42,12 +43,14 @@ namespace IrcClient.ViewModel
         public ICommand ConnectCommand { get; set; }
         public ICommand SendMessage { get; set; }
         public ICommand AddChannel { get; set; }
+        public ICommand CloseChannel { get; set; }
         private string serverName;
         private int port;
         private string nickname;
         private string password;
-        private string channel;
+        private string channelName;
         private string messageInput;
+        private int indexChannel;
         public ObservableCollection<Channel> Channels { get; set; } = new ObservableCollection<Channel>();
         public ObservableCollection<string> ChannelsList { get; set; } = new ObservableCollection<string>();
         public string ServerName
@@ -98,15 +101,15 @@ namespace IrcClient.ViewModel
                 }
             }
         }
-        public string Channel
+        public string ChannelName
         {
-            get { return channel; }
+            get { return channelName; }
             set
             {
-                if (value != channel)
+                if (value != channelName)
                 {
-                    channel = value;
-                    OnPropertyChanged("Channel");
+                    channelName = value;
+                    OnPropertyChanged("ChannelName");
                 }
             }
         }
@@ -119,6 +122,18 @@ namespace IrcClient.ViewModel
                 {
                     messageInput = value;
                     OnPropertyChanged("MessagaInput");
+                }
+            }
+        }
+        public int IndexChannel
+        {
+            get { return indexChannel; }
+            set
+            {
+                if (value!= indexChannel)
+                {
+                    indexChannel = value;
+                    OnPropertyChanged("IndexChannel");
                 }
             }
         }
